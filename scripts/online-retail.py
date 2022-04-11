@@ -29,8 +29,14 @@ def question_2_qa_StockCode (df):
 	))
 	print(df.groupBy("qa_StockCode").count().show())
 
-def question_2_qa_StockCode (df):
-	
+def question_3_qa_Description (df):
+	df = df.withColumn("qa_Description", (
+		F.when(F.col("Description").isNull(), "Unknown")
+		.when(F.col("Description") == "", "Unknown")
+		.otherwise("Effective")
+		))
+	print(df.groupBy("qa_Description").count().show())
+
 
 def testing (df):
 	pass
@@ -38,6 +44,7 @@ def testing (df):
 def Final_Boss (df):
 	question_1_qa_InvoiceNo(df)
 	question_2_qa_StockCode(df)
+	question_3_qa_Description(df)
 
 
 if __name__ == "__main__":
