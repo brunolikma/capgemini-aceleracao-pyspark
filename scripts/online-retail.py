@@ -98,7 +98,10 @@ def question_2_price_giftcards_sold_month (df):
 
 # Questions 3
 
-
+def question_3_sample(df):
+	df = df.withColumn('UnitPrice', F.regexp_replace(F.col('UnitPrice'), ',', '.').cast('float'))
+	print(df.where(F.col('StockCode')== "S")
+	.agg(F.round((F.sum(F.col('UnitPrice'))),2).alias('Total_Sample')).show())
 
 # Test Function
 
@@ -138,4 +141,4 @@ if __name__ == "__main__":
 	#print(df.show())
 	#print(df.printSchema)
 
-	question_2_price_giftcards_sold_month(df)
+	question_3_sample(df)
