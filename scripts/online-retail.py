@@ -91,10 +91,14 @@ def question_1_price_giftcards(df):
 def question_2_price_giftcards_sold_month (df):
 	df = (df.withColumn('UnitPrice', F.regexp_replace(F.col('UnitPrice'), ',', '.').cast('float'))
 	.withColumn("InvoiceDate", F.to_timestamp(F.col("InvoiceDate"), "d/M/yyyy H:m")))
-	print(df.where(F.col('StockCode').rlike('gift_0001'))
-	.groupBy('StockCode', F.month("InvoiceDate").alias('mes'))
-	.agg(F.round(F.sum('UnitPrice'), 2).alias('Total_Gift_Cards_Mes'))
-	.orderBy('Total_Gift_Cards_Mes', ascending=False).show())
+	print(df.where(F.col('StockCode').rlike('gift_0001').alias('Gift_Cards'))
+	.groupBy(F.month("InvoiceDate").alias('mes'))
+	.agg(F.round(F.sum('UnitPrice'), 2).alias('Giftcards_Sold_Month'))
+	.orderBy('Total_Gift_Cards_Mes').show())
+
+# Questions 3
+
+
 
 # Test Function
 
