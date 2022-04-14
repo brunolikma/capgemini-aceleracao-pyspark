@@ -93,15 +93,12 @@ def question_1_price_giftcards(df):
 # Questions 2
 
 def question_2_price_giftcards_sold_month (df):
-	(question_4_qa_InvoiceDate(df).where(F.col('StockCode')
-								  .rlike('gift_0001')
-								  .alias('Gift_Cards'))
-								  .groupBy(F.month("InvoiceDate")
-								  .alias('mes'))
-							      .agg(F.round(F.sum('UnitPrice'), 2)
-								  .alias('Giftcards_Sold_Month'))
-								  .orderBy('Total_Gift_Cards_Mes')
-								  .show())
+	df = (df.withColumn('UnitPrice', F.regexp_replace(F.col('UnitPrice'), ',', '.').cast('float'))
+			.withColumn("InvoiceDate", F.to_timestamp(F.col("InvoiceDate"), "d/M/yyyy H:m")))
+	(df.where(F.col('StockCode').rlike('gift_0001').alias('Gift_Cards'))	
+			.groupBy(F.month("InvoiceDate").alias('mes'))
+			.agg(F.round(F.sum('UnitPrice'), 2).alias('total_gift_Cards_month'))
+			.orderBy('mes').show())
 
 # Questions 3
 
@@ -183,6 +180,8 @@ def question_10(df):
 			.limit(1)
             .show())
 
+# Questions 11
+
 def question_11(df):
 	df = (standard_treatment(df).where(~F.col('InvoiceNo').rlike('C'))
 			.groupBy('InvoiceNo')
@@ -190,6 +189,9 @@ def question_11(df):
             .orderBy(F.col('valor').desc())
 			.limit(1)
             .show())
+
+# Questions 12
+
 
 def question_12(df):
 	df = (standard_treatment(df).where(~F.col('InvoiceNo').rlike('C'))
@@ -199,6 +201,8 @@ def question_12(df):
 			.limit(1)
             .show())
 
+# Questions 13
+
 def question_13(df):
 	(df.where(F.col("CustomerID").isNotNull())
 	.groupBy(F.col('CustomerID').alias('customer'))
@@ -207,10 +211,7 @@ def question_13(df):
 	.limit(1)
 	.show())
 	
-# Test Function
-
-def testing (df):
-	pass
+# final function
 
 
 if __name__ == "__main__":
@@ -223,17 +224,17 @@ if __name__ == "__main__":
 		          .schema(schema_online_retail)
 		          .load("/home/spark/capgemini-aceleracao-pyspark/data/online-retail/online-retail.csv"))
 
-	#print(df.printSchema())
-	#question_1_qa_InvoiceNo(df)
-	#pergunta_1_qa(df)
-	#print(df_final.show(999999))
-	# Final_Boss_QA(df)
-	#testing(df)
+	question_1_price_giftcards(df)
+	question_2_price_giftcards_sold_month(df)
+	question_3_sample(df)
+	question_4_best_selling_item(df)
+	question_5_best_selling_item_for_month(df)
+	question_6_best_time_of_day_has_higher_sales_value(df)
+	question_7_month_of_year_has_the_highest_sales_value(df)
+	question_8_month_of_year_has_the_highest_sales_value(df)
+	question_9(df)
+	question_10(df)
+	question_11(df)
+	question_12(df)
+	question_13(df)
 
-	#question_5_qa_UnitPrice(df)
-	#print(df.show())
-	#print(df.printSchema)
-
-	#question_1_price_giftcards_duvida_nao_funciona(df)
-	question_4_qa_InvoiceDate(df)
-	# question_2_price_giftcards_sold_month(df)
