@@ -154,12 +154,71 @@ def question_1_police_operating_budget (df):
 def question_2_highest_number_of_violent_crimes(df):
 	(df.groupBy("state","communityname")
 	.agg(
-		F.sum(
-			F.col("ViolentCrimesPerPop"))
+		F.round(
+			F.sum(
+				F.col("ViolentCrimesPerPop")),2)
 	.alias("HighestNumberOfViolentCrimes"))
 	.orderBy(F.col("HighestNumberOfViolentCrimes")
 	.desc())
 	.show())
+
+def question_3_highest_population(df):
+	(df.groupBy("state","communityname")
+	.agg(
+		F.round(
+			F.sum(
+				F.col("population")),2)
+	.alias("HighestPopulation"))
+	.orderBy(F.col("HighestPopulation")
+	.desc())
+	.show())
+
+def question_4_community_has_the_largest_black_population(df):
+	(df.groupBy("state","communityname")
+	.agg(
+		F.round(
+			F.sum(
+				F.col("racepctblack")),2)
+	.alias("CommunityHasTheLargestBlackPopulation"))
+	.orderBy(F.col("CommunityHasTheLargestBlackPopulation")
+	.desc())
+	.show())
+
+def question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df):
+	(df.groupBy("state","communityname")
+	.agg(
+		F.round(
+			F.sum(
+				F.col("pctWWage")),2)
+	.alias("WhichCommunityHasTheHighestPercentageOfPeopleReceivingSalary"))
+	.orderBy(F.col("WhichCommunityHasTheHighestPercentageOfPeopleReceivingSalary")
+	.desc())
+	.show())
+
+def question_6_which_community_has_the_largest_youth_population(df):
+	(df.groupBy("state","communityname")
+	.agg(
+		F.round(
+			F.sum(
+				F.col("agePct12t21")),2)
+	.alias("WhichCommunityHasTheLargestYouthPopulation"))
+	.orderBy(F.col("WhichCommunityHasTheLargestYouthPopulation")
+	.desc())
+	.show())
+
+def enforcement_function_for_communities_and_crimes(df):
+	print("Question 1")
+	question_1_police_operating_budget(df)
+	print("Question 2")
+	question_2_highest_number_of_violent_crimes(df)
+	print("Question 3")
+	question_3_highest_population(df)
+	print("Question 4")
+	question_4_community_has_the_largest_black_population(df)
+	print("Question 5")
+	question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df)
+	print("Question 6")
+	question_6_which_community_has_the_largest_youth_population(df)
 
 if __name__ == "__main__":
 	sc = SparkContext()
@@ -171,4 +230,4 @@ if __name__ == "__main__":
 		          .schema(schema_communities_crime)
 		          .load("/home/spark/capgemini-aceleracao-pyspark/data/communities-crime/communities-crime.csv"))
 	#print(df.show())
-	question_2_highest_number_of_violent_crimes(df)
+	enforcement_function_for_communities_and_crimes(df)
