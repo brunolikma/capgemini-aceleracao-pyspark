@@ -136,17 +136,28 @@ schema_communities_crime = StructType([
      ])
 
 def codigo_teste(df):
-	df.select("PolicOperBudg").filter("PolicOperBudg == is NULL").show()
+	(df.select("ViolentCrimesPerPop").show())
+	print(df.printSchema)
 
 def question_1_police_operating_budget (df):
 	(df.where(F.col("PolicOperBudg").isNotNull())
-	.groupBy('communityname')
+	.groupBy('state','communityname')
 	.agg(
 		F.round(
 			F.sum(
 				F.col("PolicOperBudg")),2)
 	.alias("MaxSumPolicOperBudg"))
 	.orderBy(F.col("MaxSumPolicOperBudg")
+	.desc())
+	.show())
+
+def question_2_highest_number_of_violent_crimes(df):
+	(df.groupBy("state","communityname")
+	.agg(
+		F.sum(
+			F.col("ViolentCrimesPerPop"))
+	.alias("HighestNumberOfViolentCrimes"))
+	.orderBy(F.col("HighestNumberOfViolentCrimes")
 	.desc())
 	.show())
 
@@ -160,4 +171,4 @@ if __name__ == "__main__":
 		          .schema(schema_communities_crime)
 		          .load("/home/spark/capgemini-aceleracao-pyspark/data/communities-crime/communities-crime.csv"))
 	#print(df.show())
-	question_1_police_operating_budget(df)
+	question_2_highest_number_of_violent_crimes(df)
