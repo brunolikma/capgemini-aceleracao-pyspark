@@ -206,6 +206,67 @@ def question_6_which_community_has_the_largest_youth_population(df):
 	.desc())
 	.show())
 
+def question_7_correlation_between_police_budget_and_number_of_violent_crimes(df):
+	(df.where((F.col("PolicOperBudg").isNotNull()) | (F.col("ViolentCrimesPerPop").isNotNull()))
+	.agg(
+		F.round(
+			F.corr("PolicOperBudg","ViolentCrimesPerPop"),2)
+	.alias("CorrPolicOperBudgAndViolentCrimesPerPop"))
+	.show())
+
+def question_8_correlation_between_percentage_of_white_police_officers_and_police_budget(df):
+	(df.where((F.col("PctPolicWhite").isNotNull()) | (F.col("PolicOperBudg").isNotNull()))
+	.agg(
+		F.round(
+			F.corr("PctPolicWhite","PolicOperBudg"),2)
+	.alias("CorrPctPolicWhiteAndPolicOperBudg"))
+	.show())
+
+def question_9_correlation_between_population_and_police_budget(df):
+	(df.where((F.col("population").isNotNull()) | (F.col("PolicOperBudg").isNotNull()))
+	.agg(
+		F.round(
+			F.corr("population","PolicOperBudg"),2)
+	.alias("CorrPopulationAndPolicOperBudg"))
+	.show())
+
+def question_10_correlation_between_population_and_number_of_violent_crimes(df):
+	(df.where((F.col("population").isNotNull()) | (F.col("ViolentCrimesPerPop").isNotNull()))
+	.agg(
+		F.round(
+			F.corr("population","ViolentCrimesPerPop"),2)
+	.alias("CorrPopulationAndViolentCrimesPerPop"))
+	.show())
+
+def question_11_correlation_between_median_household_income_and_number_of_violent_crimes(df):
+	(df.where((F.col("medIncome").isNotNull()) | (F.col("ViolentCrimesPerPop").isNotNull()))
+	.agg(
+		F.round(
+			F.corr("medIncome","ViolentCrimesPerPop"),2)
+	.alias("CorrMedIncomeAndViolentCrimesPerPop"))
+	.show())
+
+def question_12(df):
+	(df.select("ViolentCrimesPerPop")
+	.groupBy("state","communityname")
+	.agg(
+		F.max(
+				F.col("racepctblack","racePctWhite","racePctAsian","racePctHisp"))
+	.alias("HighestRaceComunity"))
+	.orderBy(F.col("ViolentCrimesPerPop")
+	.desc())
+	.limit(10)
+	.show())
+
+def pergunta_12(df):
+	(df.where(F.col('ViolentCrimesPerPop').isNotNull())
+	.groupBy(F.col('state'), F.col('communityname'), F.col('racepctblack'),
+	F.col('racePctWhite'), F.col('racePctAsian'), F.col('racePctHisp'))
+	.agg(F.round(F.sum(F.col('ViolentCrimesPerPop')), 2).alias('crimes_violentos'))
+	.orderBy(F.col('crimes_violentos').desc(), F.col('racepctblack').desc(),
+	F.col('racePctWhite').desc(), F.col('racePctAsian').desc(), F.col('racePctHisp').desc()).limit(10).show()
+	)
+
 def enforcement_function_for_communities_and_crimes(df):
 	print("Question 1")
 	question_1_police_operating_budget(df)
@@ -219,6 +280,18 @@ def enforcement_function_for_communities_and_crimes(df):
 	question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df)
 	print("Question 6")
 	question_6_which_community_has_the_largest_youth_population(df)
+	print("Question 7")
+	question_7_correlation_between_police_budget_and_number_of_violent_crimes(df)
+	print("Question 8")
+	question_8_correlation_between_percentage_of_white_police_officers_and_police_budget
+	print("Question 9")
+	question_9_correlation_between_population_and_police_budget(df)
+	print("Question 10")
+	question_10_correlation_between_population_and_number_of_violent_crimes(df)
+	print("Question 11")
+	question_11_correlation_between_median_household_income_and_number_of_violent_crimes(df)
+	print("Question 12")
+
 
 if __name__ == "__main__":
 	sc = SparkContext()
@@ -230,4 +303,5 @@ if __name__ == "__main__":
 		          .schema(schema_communities_crime)
 		          .load("/home/spark/capgemini-aceleracao-pyspark/data/communities-crime/communities-crime.csv"))
 	#print(df.show())
-	enforcement_function_for_communities_and_crimes(df)
+	#enforcement_function_for_communities_and_crimes(df)
+	pergunta_12(df)
