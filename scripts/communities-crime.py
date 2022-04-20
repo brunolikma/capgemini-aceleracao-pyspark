@@ -174,7 +174,7 @@ def codigo_teste(df):
 	(df.select("ViolentCrimesPerPop").show())
 	print(df.printSchema)
 
-def question_1_police_operating_budget (df):
+def question_1(df):
 	(df.groupBy('state','communityname')
 	.agg(
 		F.round(
@@ -184,7 +184,7 @@ def question_1_police_operating_budget (df):
 	.orderBy(F.col("MaxSumPolicOperBudg")
 	.show(1))
 
-def question_2_highest_number_of_violent_crimes(df):
+def question_2(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -194,7 +194,7 @@ def question_2_highest_number_of_violent_crimes(df):
 	.orderBy(F.col("HighestNumberOfViolentCrimes")
 	.show(1))
 
-def question_3_highest_population(df):
+def question_3(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -204,7 +204,7 @@ def question_3_highest_population(df):
 	.orderBy(F.col("HighestPopulation")
 	.show(1))
 
-def question_4_community_has_the_largest_black_population(df):
+def question_4(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -214,7 +214,7 @@ def question_4_community_has_the_largest_black_population(df):
 	.orderBy(F.col("CommunityHasTheLargestBlackPopulation")
 	.show(1))
 
-def question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df):
+def question_5(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -224,7 +224,7 @@ def question_5_which_community_has_the_highest_percentage_of_people_receiving_sa
 	.orderBy(F.col("WhichCommunityHasTheHighestPercentageOfPeopleReceivingSalary")
 	.show(1))
 
-def question_6_which_community_has_the_largest_youth_population(df):
+def question_6(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -234,35 +234,35 @@ def question_6_which_community_has_the_largest_youth_population(df):
 	.orderBy(F.col("WhichCommunityHasTheLargestYouthPopulation")
 	.show(1))
 
-def question_7_correlation_between_police_budget_and_number_of_violent_crimes(df):
+def question_7(df):
 	(df.agg(
 		F.round(
 			F.corr("PolicOperBudg","ViolentCrimesPerPop"),2)
 	.alias("CorrPolicOperBudgAndViolentCrimesPerPop"))
 	.show())
 
-def question_8_correlation_between_percentage_of_white_police_officers_and_police_budget(df):
+def question_8(df):
 	(df.agg(
 		F.round(
 			F.corr("PctPolicWhite","PolicOperBudg"),2)
 	.alias("CorrPctPolicWhiteAndPolicOperBudg"))
 	.show())
 
-def question_9_correlation_between_population_and_police_budget(df):
+def question_9(df):
 	(df.agg(
 		F.round(
 			F.corr("population","PolicOperBudg"),2)
 	.alias("CorrPopulationAndPolicOperBudg"))
 	.show())
 
-def question_10_correlation_between_population_and_number_of_violent_crimes(df):
+def question_10(df):
 	(df.agg(
 		F.round(
 			F.corr("population","ViolentCrimesPerPop"),2)
 	.alias("CorrPopulationAndViolentCrimesPerPop"))
 	.show())
 
-def question_11_correlation_between_median_household_income_and_number_of_violent_crimes(df):
+def question_11(df):
 	(df.agg(
 		F.round(
 			F.corr("medIncome","ViolentCrimesPerPop"),2)
@@ -291,27 +291,27 @@ def question_12(df):
 
 def enforcement_function_for_communities_and_crimes(df):
 	print("Question 1")
-	question_1_police_operating_budget(df)
+	question_1(df)
 	print("Question 2")
-	question_2_highest_number_of_violent_crimes(df)
+	question_2(df)
 	print("Question 3")
-	question_3_highest_population(df)
+	question_3(df)
 	print("Question 4")
-	question_4_community_has_the_largest_black_population(df)
+	question_4(df)
 	print("Question 5")
-	question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df)
+	question_5(df)
 	print("Question 6")
-	question_6_which_community_has_the_largest_youth_population(df)
+	question_6 df)
 	print("Question 7")
-	question_7_correlation_between_police_budget_and_number_of_violent_crimes(df)
+	question_7(df)
 	print("Question 8")
-	question_8_correlation_between_percentage_of_white_police_officers_and_police_budget(df)
+	question_8(df)
 	print("Question 9")
-	question_9_correlation_between_population_and_police_budget(df)
+	question_9(df)
 	print("Question 10")
-	question_10_correlation_between_population_and_number_of_violent_crimes(df)
+	question_10(df)
 	print("Question 11")
-	question_11_correlation_between_median_household_income_and_number_of_violent_crimes(df)
+	question_11(df)
 	print("Question 12")
 	question_12(df)
 
