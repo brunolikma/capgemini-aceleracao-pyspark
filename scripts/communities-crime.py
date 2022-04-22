@@ -3,7 +3,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
  
-
 schema_communities_crime = StructType([ 
     StructField('state', IntegerType(), True),
     StructField('county', IntegerType(), True),
@@ -135,6 +134,16 @@ schema_communities_crime = StructType([
     StructField('ViolentCrimesPerPop', FloatType(), True),
      ])
 
+if __name__ == "__main__":
+	sc = SparkContext()
+	spark = (SparkSession.builder.appName("Aceleração PySpark - Capgemini [Communities & Crime]"))
+
+	df = (spark.getOrCreate().read
+		          .format("csv")
+		          .option("header", "true")
+		          .schema(schema_communities_crime)
+		          .load("/home/spark/capgemini-aceleracao-pyspark/data/communities-crime/communities-crime.csv"))
+	
 
 def create_column(df):
 	df = (df.withColumn("HighestRace", 
@@ -146,23 +155,36 @@ def create_column(df):
 	.when((F.col("racePctAsian") > F.col("racePctHisp")), "asian heritage")
 	.otherwise("hispanic heritage")))
 
+def isNa(df): #limpar null
+	names =df.schema.names
+	for c in names:
+		df=df.withColumn(c, (
+			F.when(
+				F.col(c).contains("?"), None
+			).otherwise(
+				F.col(c))
+			)
+		)
+		return df
+
+df = isNa(df)
+
+
 def codigo_teste(df):
 	(df.select("ViolentCrimesPerPop").show())
 	print(df.printSchema)
 
-def question_1_police_operating_budget (df):
-	(df.where(F.col("PolicOperBudg").isNotNull())
-	.groupBy('state','communityname')
+def question_1(df):
+	(df.groupBy('state','communityname')
 	.agg(
 		F.round(
 			F.sum(
 				F.col("PolicOperBudg")),2)
 	.alias("MaxSumPolicOperBudg"))
 	.orderBy(F.col("MaxSumPolicOperBudg")
-	.desc())
-	.show())
+	.show(1))
 
-def question_2_highest_number_of_violent_crimes(df):
+def question_2(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -170,10 +192,9 @@ def question_2_highest_number_of_violent_crimes(df):
 				F.col("ViolentCrimesPerPop")),2)
 	.alias("HighestNumberOfViolentCrimes"))
 	.orderBy(F.col("HighestNumberOfViolentCrimes")
-	.desc())
-	.show())
+	.show(1))
 
-def question_3_highest_population(df):
+def question_3(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -181,10 +202,9 @@ def question_3_highest_population(df):
 				F.col("population")),2)
 	.alias("HighestPopulation"))
 	.orderBy(F.col("HighestPopulation")
-	.desc())
-	.show())
+	.show(1))
 
-def question_4_community_has_the_largest_black_population(df):
+def question_4(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -192,10 +212,9 @@ def question_4_community_has_the_largest_black_population(df):
 				F.col("racepctblack")),2)
 	.alias("CommunityHasTheLargestBlackPopulation"))
 	.orderBy(F.col("CommunityHasTheLargestBlackPopulation")
-	.desc())
-	.show())
+	.show(1))
 
-def question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df):
+def question_5(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -203,10 +222,9 @@ def question_5_which_community_has_the_highest_percentage_of_people_receiving_sa
 				F.col("pctWWage")),2)
 	.alias("WhichCommunityHasTheHighestPercentageOfPeopleReceivingSalary"))
 	.orderBy(F.col("WhichCommunityHasTheHighestPercentageOfPeopleReceivingSalary")
-	.desc())
-	.show())
+	.show(1))
 
-def question_6_which_community_has_the_largest_youth_population(df):
+def question_6(df):
 	(df.groupBy("state","communityname")
 	.agg(
 		F.round(
@@ -214,44 +232,38 @@ def question_6_which_community_has_the_largest_youth_population(df):
 				F.col("agePct12t21")),2)
 	.alias("WhichCommunityHasTheLargestYouthPopulation"))
 	.orderBy(F.col("WhichCommunityHasTheLargestYouthPopulation")
-	.desc())
-	.show())
+	.show(1))
 
-def question_7_correlation_between_police_budget_and_number_of_violent_crimes(df):
-	(df.where((F.col("PolicOperBudg").isNotNull()) | (F.col("ViolentCrimesPerPop").isNotNull()))
-	.agg(
+def question_7(df):
+	(df.agg(
 		F.round(
 			F.corr("PolicOperBudg","ViolentCrimesPerPop"),2)
 	.alias("CorrPolicOperBudgAndViolentCrimesPerPop"))
 	.show())
 
-def question_8_correlation_between_percentage_of_white_police_officers_and_police_budget(df):
-	(df.where((F.col("PctPolicWhite").isNotNull()) | (F.col("PolicOperBudg").isNotNull()))
-	.agg(
+def question_8(df):
+	(df.agg(
 		F.round(
 			F.corr("PctPolicWhite","PolicOperBudg"),2)
 	.alias("CorrPctPolicWhiteAndPolicOperBudg"))
 	.show())
 
-def question_9_correlation_between_population_and_police_budget(df):
-	(df.where((F.col("population").isNotNull()) | (F.col("PolicOperBudg").isNotNull()))
-	.agg(
+def question_9(df):
+	(df.agg(
 		F.round(
 			F.corr("population","PolicOperBudg"),2)
 	.alias("CorrPopulationAndPolicOperBudg"))
 	.show())
 
-def question_10_correlation_between_population_and_number_of_violent_crimes(df):
-	(df.where((F.col("population").isNotNull()) | (F.col("ViolentCrimesPerPop").isNotNull()))
-	.agg(
+def question_10(df):
+	(df.agg(
 		F.round(
 			F.corr("population","ViolentCrimesPerPop"),2)
 	.alias("CorrPopulationAndViolentCrimesPerPop"))
 	.show())
 
-def question_11_correlation_between_median_household_income_and_number_of_violent_crimes(df):
-	(df.where((F.col("medIncome").isNotNull()) | (F.col("ViolentCrimesPerPop").isNotNull()))
-	.agg(
+def question_11(df):
+	(df.agg(
 		F.round(
 			F.corr("medIncome","ViolentCrimesPerPop"),2)
 	.alias("CorrMedIncomeAndViolentCrimesPerPop"))
@@ -279,39 +291,30 @@ def question_12(df):
 
 def enforcement_function_for_communities_and_crimes(df):
 	print("Question 1")
-	question_1_police_operating_budget(df)
+	question_1(df)
 	print("Question 2")
-	question_2_highest_number_of_violent_crimes(df)
+	question_2(df)
 	print("Question 3")
-	question_3_highest_population(df)
+	question_3(df)
 	print("Question 4")
-	question_4_community_has_the_largest_black_population(df)
+	question_4(df)
 	print("Question 5")
-	question_5_which_community_has_the_highest_percentage_of_people_receiving_salary(df)
+	question_5(df)
 	print("Question 6")
-	question_6_which_community_has_the_largest_youth_population(df)
+	question_6 df)
 	print("Question 7")
-	question_7_correlation_between_police_budget_and_number_of_violent_crimes(df)
+	question_7(df)
 	print("Question 8")
-	question_8_correlation_between_percentage_of_white_police_officers_and_police_budget(df)
+	question_8(df)
 	print("Question 9")
-	question_9_correlation_between_population_and_police_budget(df)
+	question_9(df)
 	print("Question 10")
-	question_10_correlation_between_population_and_number_of_violent_crimes(df)
+	question_10(df)
 	print("Question 11")
-	question_11_correlation_between_median_household_income_and_number_of_violent_crimes(df)
+	question_11(df)
 	print("Question 12")
 	question_12(df)
 
-if __name__ == "__main__":
-	sc = SparkContext()
-	spark = (SparkSession.builder.appName("Aceleração PySpark - Capgemini [Communities & Crime]"))
 
-	df = (spark.getOrCreate().read
-		          .format("csv")
-		          .option("header", "true")
-		          .schema(schema_communities_crime)
-		          .load("/home/spark/capgemini-aceleracao-pyspark/data/communities-crime/communities-crime.csv"))
-	
 
 	enforcement_function_for_communities_and_crimes(df)
